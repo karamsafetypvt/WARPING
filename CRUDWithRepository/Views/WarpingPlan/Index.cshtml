@@ -1,0 +1,153 @@
+﻿@model IEnumerable<CRUDWithRepository.Core.WarpingPlan>
+@{
+    ViewData["Title"] = "Plan List";
+}
+
+
+<div class="container-fluid">
+
+    <!-- start page title -->
+    <div class="row">
+        <div class="col-md-10 col-sm-12">
+            <div class="page-title-box">
+                <h4>Warping Plan Master</h4>
+                <ol class="breadcrumb m-0">
+                    <li class="breadcrumb-item"><a href="javascript: void(0);">WMS</a></li>
+                    <li class="breadcrumb-item"><a href="javascript: void(0);">Master</a></li>
+                    <li class="breadcrumb-item active">Warping Plan Master</li>
+                </ol>
+            </div>
+        </div>
+
+        <div class="col-md-2 col-sm-12" style="margin-bottom:10px;">
+            @if (Context.Session.GetInt32("UserRole") == 1)
+            {
+                <a type="button" href="/WarpingPlan/CreateOrEdit" class="btn btn-info waves-effect waves-light"><i class="ion ion-ios-add"></i> Add New</a>
+            }
+        </div>
+
+    </div>
+     <div class="row mb-3">
+        <div class="col-12">
+            <form method="get" action="/WarpingPlan/Index" class="row g-3">
+                <div class="col-md-3">
+                    <label for="filterId" class="form-label">Warping ID</label>
+                    <input type="text" name="filterId" id="filterId" class="form-control" value="@ViewBag.FilterId" placeholder="Enter Warping ID">
+                </div>
+                <div class="col-md-3">
+                    <label for="filterDate" class="form-label">Warping Date</label>
+                    <input type="date" name="filterDate" id="filterDate" class="form-control" value="@ViewBag.FilterDate">
+                </div>
+                <div class="col-md-3">
+                    <label for="filterStatus" class="form-label">Status</label>
+                    <select name="filterStatus" id="filterStatus" class="form-control">
+                        <option value="">All Status</option>
+                        <option value="1" >Level 1 (Floor Manager)</option>
+                        <option value="2" >Level 2 (Supervisor)</option>
+                        <option value="3" >Level 3 (Operator)</option>
+                        <option value="4" >Completed</option>
+                        <option value="5" >Closed</option>
+                        <option value="0" >Inactive</option>
+                    </select>
+                </div>
+                <div class="col-md-3 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary me-2">Filter</button>
+                    <a href="/WarpingPlan/Index" class="btn btn-secondary">Reset</a>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+
+                    <h4 class="card-title">Warping Plan Master</h4>
+                    <p class="card-title-desc">
+                        &nbsp;&nbsp;&nbsp;
+                    </p>
+                    <div class="table-responsive">
+                        <table id="datatable" class="table table-stripedp" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th>Warping ID</th>
+                                    <th>Warping Date</th>
+                                    <th>Created By</th>
+                                    <th>Created Date</th>
+                                    <th>@Html.DisplayNameFor(Model => Model.Status)</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                @if (Model != null && Model.Any())
+                                {
+                                    @foreach (var product in Model)
+                                    {
+                                        <tr>
+                                            <td>@($"WP00{product.Id}")</td>
+                                            <td>@product.Date.Value.ToString("dd-MM-yyyy")</td>
+                                            <td>@product.CreatedByL1</td>
+                                            <td>@product.CreatedDateL1</td>
+                                            @if (@product.Status == 1)
+                                            {
+                                                <td> <span class="badge bg-warning">Level 1 (Floor Manager)</span> </td>
+                                            }
+                                            else if (@product.Status == 2)
+                                            {
+                                                <td> <span class="badge bg-primary">Level 2 (Supervisor)</span> </td>
+                                            }
+                                            else if (@product.Status == 3)
+                                            {
+                                                <td> <span class="badge bg-success">Level 3 (Operator)</span> </td>
+                                            }
+                                            else if (@product.Status == 4)
+                                            {
+                                                <td> <span class="badge bg-dark">Completed</span> </td>
+                                            }
+                                            else if (@product.Status == 5)
+                                            {
+                                                <td> <span class="badge bg-dark">Closed</span> </td>
+                                            }
+                                            else
+                                            {
+                                                <td> <span class="badge bg-danger">Inactive</span> </td>
+                                            }
+                                            <td class="textcenter">
+                                                <a class="btn btn-outline-success btn-sm edit" title="Edit" href="@Url.Action("CreateOrEdit", "WarpingPlan", new { ID = @product.Id })">
+                                                    <i class="fas fa-pencil-alt"></i>
+                                                </a>
+
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="5"><div>No details available</div></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- end col -->
+    </div>
+</div>
+<script>
+    // JavaScript to set the selected value for filterStatus
+    document.addEventListener('DOMContentLoaded', function () {
+        // Get the selected filterStatus value from the ViewBag (you can use your backend to inject this value)
+        var selectedStatus = "@ViewBag.FilterStatus"; // Assuming ViewBag.FilterStatus is set in the controller
+
+        // Set the selected value dynamically in the dropdown
+        if (selectedStatus) {
+            var selectElement = document.getElementById('filterStatus');
+            selectElement.value = selectedStatus;
+        }
+    });
+</script>

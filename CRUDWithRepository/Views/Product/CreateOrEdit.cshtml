@@ -1,0 +1,140 @@
+﻿@model CRUDWithRepository.Core.Product
+
+@{
+    ViewData["Title"] = Model != null && Model.ID == 0 ? "Create Product" : "Edit Product";
+}
+
+<div class="container-fluid">
+
+    <!-- start page title -->
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="page-title-box">
+                <h4>Product Master</h4>
+                <ol class="breadcrumb m-0">
+                    <li class="breadcrumb-item"><a href="javascript: void(0);">Warping Management System</a></li>
+                    <li class="breadcrumb-item"><a href="javascript: void(0);">Master</a></li>
+                    <li class="breadcrumb-item active">Product Master</li>
+                </ol>
+            </div>
+        </div>
+
+    </div>
+    <!-- end page title -->
+    @using (Html.BeginForm("CreateOrEdit", "Product", FormMethod.Post, new { enctype = "multipart/form-data", @class = "needs-validation", @novalidate = "" }))
+    {
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Product Master</h4>
+                        <p class="card-title-desc">&nbsp;&nbsp;&nbsp;</p>
+                        <form class="needs-validation" novalidate>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+
+                                        @Html.HiddenFor(m => m.ID)
+                                        @Html.LabelFor(m => m.ProductName, new { @class = "control-label" })
+                                        <span class="text-danger">*</span>
+                                        @if (Model.ID > 0)
+                                        {
+                                            @Html.TextBoxFor(m => m.ProductName, new { @class = "form-control", @maxlength = "200", @required = "required", @readonly = "true" })
+                                        }
+                                        else
+                                        {
+                                            <select name="ProductName" class="form-control searchable-dropdown Productcode" onchange="GetProductDetails()" required>
+                                                <option value="" selected disabled>- Product Name -</option>
+                                                @if (ViewBag.Products != null)
+                                                {
+                                                    foreach (var itm in ViewBag.Products)
+                                                    {
+                                                        <option value="@itm.Text" data-description="@itm.Group.Name" item-status="@itm.Value">@itm.Text</option>
+                                                    }
+                                                }
+                                            </select>
+                                        }
+                                        @Html.ValidationMessageFor(m => m.ProductName, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        @Html.LabelFor(m => m.Description, new { @class = "control-label" })
+                                        <span class="text-danger">*</span>
+                                        @Html.TextAreaFor(m => m.Description, new { @class = "form-control item-description", @maxlength = "500", @required = "required", @readonly = "true",@row=5 })
+                                        @Html.ValidationMessageFor(m => m.Description, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="mb-3">
+                                        @Html.LabelFor(m => m.Runnage, new { @class = "control-label" })
+                                        <span class="text-danger">*</span>
+                                        @Html.TextBoxFor(m => m.Runnage, new { @class = "form-control", @maxlength = "5", @required = "required", @type = "text", @oninput = "this.value = this.value.replace(/[^0-9]/g, '')" })
+                                        @Html.ValidationMessageFor(m => m.Runnage, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                                <div class="col-md-2">
+                                    <div class="mb-3">
+                                        @Html.LabelFor(m => m.Status, new { @class = "control-label" })
+                                        <span class="text-danger">*</span>
+                                        @Html.DropDownListFor(m => m.Status,
+                                                 new SelectList(new[] {
+                                    new { Value = "1", Text = "Active" },
+                                    new { Value = "0", Text = "Inactive" }}, "Value", "Text"), "Select Status", new { @class = "form-control Status"})
+                                        @Html.ValidationMessageFor(m => m.Status, "", new { @class = "text-danger" })
+
+                                    </div>
+                                </div>
+
+                                <!-- end col -->
+                            </div>
+                            @if (Model != null && Model.ID == 0)
+                            {
+                                <button type="submit" class="btn btn-success float-right">
+                                    Create
+                                </button>
+                            }
+                            else
+                            {
+                                <button type="submit" class="btn btn-success float-right">
+                                    Update
+                                </button>
+                            }
+                            <a class="btn btn-dark" type="button" href="/Product/Index">Cancel</a>
+                        </form>
+                        <!-- end form -->
+                    </div>
+                </div>
+                <!-- end card -->
+            </div> <!-- end col -->
+
+
+        </div>
+    }
+</div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function () {
+        $("select.searchable-dropdown").select2();
+
+    });
+    function GetProductDetails() {
+        var description = $(".Productcode option:selected").attr('data-description');
+        var sts = $(".Productcode option:selected").attr('item-status');
+        console.log(description);
+        console.log(sts);
+        $('.item-description').val(description);
+        $('.Status').val(sts);
+        $('.Status').prop('readonly', true);
+    }
+
+</script>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
+
+

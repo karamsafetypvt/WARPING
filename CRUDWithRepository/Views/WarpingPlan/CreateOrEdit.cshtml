@@ -1,0 +1,718 @@
+﻿@model CRUDWithRepository.Core.WarpingPlan
+
+@{
+    ViewData["Title"] = Model != null && Model.Id == 0 ? "Create Warping Plan" : "Edit Warping Plan";
+}
+<style>
+    .select2, textarea {
+        width: 200px !important;
+    }
+
+    input[type="number"] {
+        width: 150px !important;
+    }
+
+    .SUP, .OP, .onSUPApproval, .actions {
+        display: none;
+    }
+</style>
+
+<div class="container-fluid">
+
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="page-title-box">
+                <h4>Warping Plan Master</h4>
+                <ol class="breadcrumb m-0">
+                    <li class="breadcrumb-item"><a href="javascript: void(0);">Warping Management System</a></li>
+                    <li class="breadcrumb-item"><a href="javascript: void(0);">Master</a></li>
+                    <li class="breadcrumb-item active">Warping Plan Master</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+
+    @using (Html.BeginForm("CreateOrEdit", "WarpingPlan", FormMethod.Post, new { enctype = "multipart/form-data", @class = "needs-validation", @novalidate = "", @id = "formdis" }))
+    {
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">Warping Plan Master</h4>
+                        <p class="card-title-desc">&nbsp;&nbsp;&nbsp;</p>
+                        <form class="needs-validation" novalidate>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        @Html.HiddenFor(m => m.Id)
+                                        @Html.HiddenFor(m => m.Status)
+                                        @Html.LabelFor(m => m.Date, new { @class = "control-label" })
+                                        <span class="text-danger">*</span>
+                                        @Html.TextBoxFor(m => m.Date, new { @type = "date", @class = "form-control", @required = "required" })
+                                        @Html.ValidationMessageFor(m => m.Date, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <h4>Warping Plan Details</h4>
+                                    <div class="table-responsive">
+                                        <table class="table" id="warpMachineGrid">
+                                            <thead>
+                                                <tr>
+                                                    <th>Machine No.</th>
+                                                    <th>Previous Item Code</th>
+                                                    <th>Planned Item Code</th>
+                                                    <th>Item Description</th>
+                                                    <th>Planned Qty (In-kgs)</th>
+                                                    <th class="SUP">Planned Qty (In Mtr.)</th>
+                                                    <th class="SUP">Remark</th>
+                                                    <th class="OP">Warping Machine</th>
+                                                    <th class="onSUPApproval">Achieved Qty</th>
+                                                    <th class="onSUPApproval">Achieved Remark</th>
+                                                    <th class="actions">Action</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                @if (Model.WarpingPlanDetails != null && Model.WarpingPlanDetails.Any())
+                                                {
+                                                    int index = 0;
+                                                    @foreach (var detail in Model.WarpingPlanDetails)
+                                                    {
+                                                        <tr>
+                                                            <td>
+                                                                <select name="WarpingPlanDetails[@index].MachineNo" class="form-control FLdrp" onchange="PreviousItem(this,@index)" required>
+                                                                    <option value="" selected disabled>- Machine No -</option>
+                                                                    @if (ViewBag.LoomMachineList != null)
+                                                                    {
+                                                                        foreach (var loommachine in ViewBag.LoomMachineList)
+                                                                        {
+                                                                            if (@loommachine.Value == detail.MachineNo)
+                                                                            {
+                                                                                <option value="@loommachine.Value" selected>@loommachine.Text</option>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <option value="@loommachine.Value">@loommachine.Text</option>
+                                                                            }
+
+                                                                        }
+                                                                    }
+                                                                </select>
+                                                            </td>
+
+                                                            <td>
+                                                                <select name="WarpingPlanDetails[@index].PreviousProductId" class="form-control FLdrp" required>
+                                                                    @* <option value="" selected disabled>- Previous Item code -</option> *@
+                                                                    @if (ViewBag.ProductList != null && Model.Id > 0)
+                                                                    {
+                                                                        foreach (var Item in ViewBag.ProductList)
+                                                                        {
+                                                                            if (@Item.Value == detail.PreviousProductId.ToString())
+                                                                            {
+                                                                                <option value="@Item.Value" selected>@Item.Text</option>
+                                                                                break;
+                                                                            }
+                                                                            if (detail.PreviousProductId == 0)
+                                                                            {
+                                                                                <option value="0" selected>NA</option>
+                                                                                break;
+                                                                            }
+
+                                                                            @* else *@
+                                                                            @* {
+                                                                                <option value="@Item.Value">@Item.Text</option>
+                                                                            } *@
+
+                                                                        }
+                                                                    }
+                                                                </select>
+                                                            </td>
+
+                                                            <td>
+                                                                <select name="WarpingPlanDetails[@index].PlannedProductId" class="form-control planned-item-code FLdrp" required>
+                                                                    <option value="" selected disabled>- Planned Item code -</option>
+                                                                    @if (ViewBag.ProductList != null)
+                                                                    {
+                                                                        foreach (var item in ViewBag.ProductList)
+                                                                        {
+                                                                            if (@item.Value == detail.PlannedProductId)
+                                                                            {
+                                                                                <option value="@item.Value" data-description="@item.Group.Name" selected>@item.Text</option>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <option value="@item.Value" data-description="@item.Group.Name">@item.Text</option>
+                                                                            }
+
+                                                                        }
+                                                                    }
+                                                                </select>
+
+                                                            </td>
+
+                                                            <td>
+                                                                <textarea name="WarpingPlanDetails[@index].Description" class="form-control item-description FL" rows="5" readonly>@detail.Description</textarea>
+                                                            </td>
+
+                                                            <td>
+                                                                <input type="number" name="WarpingPlanDetails[@index].PlannedQty" value="@detail.PlannedQty" class="form-control FL" maxlength="6" required />
+                                                            </td>
+
+                                                            <td class="SUP">
+                                                                <input type="number" name="WarpingPlanDetails[@index].PlannedQty_InMtr" value="@detail.PlannedQty_InMtr" class="form-control SU item-runnage" maxlength="6" />
+                                                            </td>
+
+                                                            <td class="SUP"> <textarea name="WarpingPlanDetails[@index].Remark" class="form-control remark SU" rows="5">@detail.Remark</textarea></td>
+                                                            <td class="OP">
+                                                                <select name="WarpingPlanDetails[@index].WarpingMachineId" class="form-control OPR">
+                                                                    <option value="" selected disabled>- Warping Machine -</option>
+                                                                    @if (ViewBag.WMList != null)
+                                                                    {
+                                                                        foreach (var WM in ViewBag.WMList)
+                                                                        {
+                                                                            if (@WM.Value == detail.WarpingMachineId.ToString())
+                                                                            {
+                                                                                <option value="@WM.Value" selected>@WM.Text</option>
+                                                                            }
+                                                                            else
+                                                                            {
+                                                                                <option value="@WM.Value">@WM.Text</option>
+                                                                            }
+
+                                                                        }
+                                                                    }
+                                                                </select>
+                                                            </td>
+                                                            <td class="onSUPApproval">
+                                                                <input type="number" name="WarpingPlanDetails[@index].AchievedQty" value="@detail.AchievedQty" class="form-control" maxlength="6" />
+                                                            </td>
+                                                            <td class="onSUPApproval">
+                                                                <textarea name="WarpingPlanDetails[@index].AchievedRemark" class="form-control remark" rows="5">@detail.AchievedRemark</textarea>
+                                                            </td>
+                                                            <td class="actions">
+                                                                @if (Model.Role == 1)
+                                                                {
+                                                                    <button type="button" class="btn btn-danger removeRow"> <i class="fas fa-times"></i></button>
+                                                                }
+                                                            </td>
+                                                        </tr>
+                                                        index++;
+                                                    }
+
+                                                }
+                                                else
+                                                {
+                                                    <tr>
+
+                                                        <td>
+                                                            <select name="WarpingPlanDetails[0].MachineNo" class="form-control FLdrp" onchange="PreviousItem(this,0)" required>
+                                                                <option value="" selected disabled>- Machine No -</option>
+                                                                @if (ViewBag.LoomMachineList != null)
+                                                                {
+                                                                    foreach (var loommachine in ViewBag.LoomMachineList)
+                                                                    {
+                                                                        <option value="@loommachine.Value">@loommachine.Text</option>
+                                                                    }
+                                                                }
+                                                            </select>
+                                                        </td>
+                                                        <td>
+                                                            <select name="WarpingPlanDetails[0].PreviousProductId" class="form-control FLdrp" required>
+                                                                <option value="" selected disabled>- Previous Item code -</option>
+                                                                @*  @if (ViewBag.ProductList != null)
+                                                                {
+                                                                    foreach (var Item in ViewBag.ProductList)
+                                                                    {
+                                                                        <option value="@Item.Value">@Item.Text</option>
+                                                                    }
+                                                                } *@
+                                                            </select>
+                                                        </td>
+
+                                                        <td>
+                                                            <select name="WarpingPlanDetails[0].PlannedProductId" class="form-control planned-item-code FLdrp" required>
+                                                                <option value="" selected disabled>- Planned Item code -</option>
+                                                                @if (ViewBag.ProductList != null)
+                                                                {
+                                                                    foreach (var itm in ViewBag.ProductList)
+                                                                    {
+                                                                        <option value="@itm.Value" data-description="@itm.Group.Name">@itm.Text</option>
+                                                                    }
+                                                                }
+                                                            </select>
+                                                        </td>
+                                                        <td>
+                                                            <textarea name="WarpingPlanDetails[0].Description" class="form-control item-description FL" rows="5" readonly></textarea>
+                                                        </td>
+
+                                                        <td><input type="number" name="WarpingPlanDetails[0].PlannedQty" class="form-control FL" maxlength="6" required /></td>
+                                                        <td class="SUP"><input type="number" name="WarpingPlanDetails[0].PlannedQty_InMtr SU" class="form-control item-runnage" maxlength="6" /></td>
+                                                        <td class="SUP"> <textarea name="WarpingPlanDetails[0].Remark" class="form-control remark SU" rows="5"></textarea></td>
+                                                        <td class="OP">
+                                                            <select name="WarpingPlanDetails[0].WarpingMachineId" class="form-control OPR">
+                                                                <option value="" selected disabled>- Warping Machine -</option>
+                                                                @if (ViewBag.WMList != null)
+                                                                {
+                                                                    foreach (var WM in ViewBag.WMList)
+                                                                    {
+                                                                        <option value="@WM.Value">@WM.Text</option>
+                                                                    }
+                                                                }
+                                                            </select>
+                                                        </td>
+                                                        <td class="onSUPApproval">
+                                                            <input type="number" name="WarpingPlanDetails[0].AchievedQty" class="form-control" maxlength="6" />
+                                                        </td>
+                                                        <td class="onSUPApproval">
+                                                            <textarea name="WarpingPlanDetails[0].AchievedRemark" class="form-control remark" rows="5"></textarea>
+                                                        </td>
+                                                        <td class="actions">
+                                                            @if (Model.Role == 1)
+                                                            {
+                                                                <button type="button" class="btn btn-danger removeRow" style="display:none;"> <i class="fas fa-times"></i></button>
+                                                            }
+                                                        </td>
+                                                    </tr>
+                                                }
+                                            </tbody>
+                                            @if (Model.Role == 1)
+                                            {
+                                                <tfoot>
+                                                    <tr>
+                                                        <td colspan="8" class="text-right">
+                                                            <button type="button" class="btn btn-info addRow" style="float:right">Add New Row</button>
+                                                        </td>
+                                                    </tr>
+                                                </tfoot>
+                                            }
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                @if (Model != null && Model.Id == 0)
+                                {
+                                    <button type="submit" class="btn btn-success float-right" name="actionType" value="Create">Create</button>
+                                }
+                                else
+                                {
+                                    if (Model.Status <= Model.Role || (Model.Status == 4 && Model.Role == 2))
+                                    {
+                                        <button type="submit" class="btn btn-success float-right" name="actionType" value="Update">Update</button>
+                                    }
+                                    if (Model.Status == 3 && Model.Role == 3)
+                                    {
+                                        <button type="submit" class="btn btn-primary float-right" name="actionType" value="Complete">Complete</button>
+                                    }
+                                    if (Model.Status == 4 && Model.Role == 2)
+                                    {
+                                        <button type="submit" class="btn btn-primary float-right" name="actionType" value="Close">Close</button>
+                                    }
+                                }
+                                <a class="btn btn-dark" href="/WarpingPlan/Index">Cancel</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="~/custom/warpingplan.js"></script>
+
+<script>
+
+
+    $(document).ready(function () {
+        debugger;
+        var dateFromModel = '@Model.Date?.ToString("MM-dd-yyyy")';
+
+        if (dateFromModel) {
+            var parts = dateFromModel.split('-');
+            if (parts.length === 3) {
+                var formattedDate = parts[2] + '-' + parts[0] + '-' + parts[1];
+                document.querySelector('input[name="Date"]').value = formattedDate;
+            }
+        }
+        FieldAccess();
+
+
+        $(document).on('click', '.addRow', function () {
+
+            var isValid = true;
+
+            if (isValid) {
+                var rowCount = $('#warpMachineGrid tbody tr').length; // Get current row count (next index)
+
+                var newRow = $("<tr>" +
+                    "<td><select class='form-control FLdrp' name='WarpingPlanDetails[" + rowCount + "].MachineNo'  onchange='PreviousItem(this," + rowCount + ")' required>" +
+                    "<option value='' disabled selected>-- Machine No --</option>" +
+                    `@foreach (var machine in ViewBag.LoomMachineList)
+    {
+                                                                <option value='@machine.Value'>@machine.Text</option>
+    }` +
+                    "</select></td>" +
+                    "<td><select class='form-control FLdrp' name='WarpingPlanDetails[" + rowCount + "].PreviousProductId' required>" +
+                    "<option value='' disabled selected>-- Previous Item Code --</option>" +
+    @*  `@foreach (var product in ViewBag.ProductList)
+    {
+                                                    <option value='@product.Value'>@product.Text</option>
+    }` + *@
+                    "</select></td>" +
+                    "<td><select class='form-control planned-item-code FLdrp' name='WarpingPlanDetails[" + rowCount + "].PlannedProductId' required>" +
+                    "<option value='' disabled selected>-- Planned Item Code --</option>" +
+                    `@foreach (var product in ViewBag.ProductList)
+    {
+                                                                <option value='@product.Value' data-description='@product.Group.Name'>@product.Text</option>
+    }` +
+                    "</select></td>" +
+                    "<td><textarea class='form-control item-description FL' name='WarpingPlanDetails[" + rowCount + "].Description' rows='5' readonly></textarea></td>" +
+                    "<td><input type='number' class='form-control FL' name='WarpingPlanDetails[" + rowCount + "].PlannedQty' required /></td>" +
+                    "<td class='SUP'><input type='number' class='form-control SU item-runnage' name='WarpingPlanDetails[" + rowCount + "].PlannedQty_InMtr'  /></td>" +
+                    "<td class='SUP'><textarea class='form-control remark SU' name='WarpingPlanDetails[" + rowCount + "].Remark' rows='5'></textarea></td>" +
+                    "<td class='OP'><select class='form-control OPR' name='WarpingPlanDetails[" + rowCount + "].WarpingMachineId'>" +
+                    "<option value='' disabled selected>-- Warping Machine --</option>" +
+                    `@foreach (var machine in ViewBag.WMList)
+    {
+                                                                <option value='@machine.Value'>@machine.Text</option>
+    }` +
+                    "</select></td>" +
+                    "<td class='onSUPApproval'><input type='number' class='form-control' name='WarpingPlanDetails[" + rowCount + "].AchievedQty'  /></td>" +
+                    "<td class='onSUPApproval'><textarea class='form-control remark' name='WarpingPlanDetails[" + rowCount + "].AchievedRemark' rows='5'></textarea></td>" +
+                    "<td class='FM actions'><button type='button' class='btn btn-danger removeRow' style='display:none;' onclick='removeRow(this)'><i class='fas fa-times'></i></button></td>" +
+                    "</tr>");
+
+
+                $('#warpMachineGrid tbody').append(newRow);
+
+                newRow.find('select').select2();
+
+                $('#warpMachineGrid tbody tr .removeRow').show();
+                FieldAccess();
+            } else {
+                alert('Please fill all fields in the last row before adding a new one.');
+            }
+        });
+    });
+    function Disable() {
+        $('input').prop('disabled', true);
+        $('select').prop('disabled', true);
+        $('textarea').prop('disabled', true);
+        $('#formdis button').hide();
+        $('button[type="submit"]').hide();
+        $('.addRow').hide();
+        $('td.actions, th.actions').hide();
+    }
+
+    function FieldAccess() {
+        var Role = '@Model.Role';
+        var St = '@Model.Status';
+
+        if (Role > 0) {
+            if (Role == 1) {
+                FloorManagerAccess(St);
+            }
+            if (Role == 2) {
+                SupervisorAccess(St);
+            }
+            if (Role == 3) {
+                OperatorAccess();
+            }
+            if (Role == 4) {
+                Disable();
+            }
+            if (St == 5) {
+                $('td.OP, th.OP, td.SUP, th.SUP').show();
+                $('td.OP, th.OP, td.onSUPApproval, th.onSUPApproval').show();
+                Disable();
+            }
+            if (Role == 2 && St == 4) {
+                AccessAfterComplete();
+            }
+            if (Role < St && !(St==4 && Role==2)) {
+                Disable();
+            }
+        } else {
+            $('td.onSUPApproval,th.onSUPApproval,td.actions, th.actions,td.SUP,th.SUP,td.OP,th.OP').hide();
+        }
+    }
+
+    function OperatorAccess() {
+        $('td.OP, th.OP, td.SUP, th.SUP').show();
+        $('td.actions, th.actions, td.onSUPApproval, th.onSUPApproval').hide();
+        $('.FL, .SU, #Date').prop('readonly', true);
+        $('.FLdrp').select2().on('select2:opening select2:closing', e => e.preventDefault());
+    }
+
+    function SupervisorAccess(St) {
+        $('td.SUP, th.SUP').show();
+        if(St>2){
+            $('td.OP, th.OP, td.onSUPApproval, th.onSUPApproval, td.actions, th.actions').show();
+        }else{
+            $('td.OP, th.OP, td.onSUPApproval, th.onSUPApproval, td.actions, th.actions').hide();
+        }
+        $('.FL, #Date').prop('readonly', true);
+        $('.FLdrp').select2().on('select2:opening select2:closing', e => e.preventDefault());
+    }
+
+    function FloorManagerAccess(St) {
+        $('td.actions, th.actions').show();
+        if(St>1){
+        $('td.SUP, th.SUP, td.OP, th.OP, td.onSUPApproval, th.onSUPApproval').show();
+        }else{
+            $('td.SUP, th.SUP, td.OP, th.OP, td.onSUPApproval, th.onSUPApproval').hide();
+        }
+    }
+
+    function AccessAfterComplete() {
+        $('td.OP, th.OP, td.SUP, th.SUP').show();
+        $('td.actions, th.actions').hide();
+        $('td.onSUPApproval, th.onSUPApproval').show();
+        $('.FL, .SU, #Date').prop('readonly', true);
+        $('.FLdrp, .OPR').select2().on('select2:opening select2:closing', e => e.preventDefault());
+    }
+
+
+    // $('#formdis').on('submit', function (e) {
+    //     debugger;
+    //     let userRole = '@Model.Role';
+    //     let isValid = true;
+    //     let actionType = $('button[type="submit"][clicked=true]').val();
+
+    //     $('#warpMachineGrid tbody tr').each(function () {
+    //         $(this).find('input, select:not(.OPR), .remark').each(function () {
+
+    //             if ($(this).closest('td').is(':visible')) {
+
+    //                 $(this).attr('required', 'required');
+
+    //                 if ($(this).val() === '') {
+    //                     isValid = false;
+    //                     $(this).addClass('is-invalid');
+    //                 } else {
+    //                     $(this).removeClass('is-invalid');
+    //                 }
+    //             } else {
+
+    //                 $(this).removeAttr('required').removeClass('is-invalid');
+    //             }
+    //         });
+    //     });
+
+    //     if (!isValid) {
+    //         e.preventDefault();
+    //         Swal.fire('Validation Error', 'Please fill in all required fields.', 'error');
+    //          return;
+    //     }
+
+    //     if (actionType === "Complete" || actionType === "Close") {
+    //         let isValid1 = true;
+    //     if (actionType === "Complete"){
+    //     $('#warpMachineGrid tbody tr').each(function () {
+    //         let selectField = $(this).find('select.OPR');
+    //         let errorMessage = '<div class="invalid-feedback d-block">Please select a warping machine.</div>';
+
+    //         if (selectField.val() === '' || selectField.val() === null) {
+    //             isValid1 = false;
+    //             selectField.addClass('is-invalid');
+    //             selectField.next('.invalid-feedback').remove();
+    //             selectField.after(errorMessage);
+    //         } else {
+    //             selectField.removeClass('is-invalid');
+    //             selectField.next('.invalid-feedback').remove();
+    //         }
+    //     });
+    //     }
+    //     else if (actionType === "Close"){
+    //     $('#warpMachineGrid tbody tr').each(function () {
+    //         $(this).find('input,.remark').each(function () {
+
+    //             if ($(this).closest('td').is(':visible')) {
+
+    //                 $(this).attr('required', 'required');
+
+    //                 if ($(this).val() === '') {
+    //                     isValid1 = false;
+    //                     $(this).addClass('is-invalid');
+    //                 } else {
+    //                     $(this).removeClass('is-invalid');
+    //                 }
+    //             } else {
+
+    //                 $(this).removeAttr('required').removeClass('is-invalid');
+    //             }
+    //         });
+    //     });
+    //     }
+    //     if (!isValid1) {
+    //           e.preventDefault(); // Stop form submission
+    //            Swal.fire('Validation Error', 'Please fill in all required fields.', 'error');
+    //         return;
+    //     }
+
+    //     let actionText = actionType === "Complete" ? "complete" : "close";
+
+    //     Swal.fire({
+    //         title: `Are you sure you want to ${actionText} this plan?`,
+    //         text: "",
+    //         icon: "warning",
+    //         showCancelButton: true,
+    //         confirmButtonColor: "#3085d6",
+    //         cancelButtonColor: "#d33",
+    //         confirmButtonText: `Yes, ${actionText} it!`
+    //     }).then((result) => {
+    //         if (result.isConfirmed) {
+    //             $('#formdis').off('submit').submit();
+    //         }
+    //     });
+    // }
+    // });
+
+
+
+
+
+    // $('button[type="submit"]').click(function () {
+    //     $('button[type="submit"]').removeAttr("clicked");
+    //     $(this).attr("clicked", "true");
+    // });
+
+    $('#formdis').on('submit', function (e) {
+        let actionType = $('button[type="submit"][clicked=true]').val(); // Get clicked button action type
+        let isValid = true;
+
+        // Validate form inputs
+        $('#warpMachineGrid tbody tr').each(function () {
+            $(this).find('input, select:not(.OPR), .remark').each(function () {
+                if ($(this).closest('td').is(':visible')) {
+                    $(this).attr('required', 'required');
+                    if ($(this).val() === '') {
+                        isValid = false;
+                        $(this).addClass('is-invalid');
+                    } else {
+                        $(this).removeClass('is-invalid');
+                    }
+                } else {
+                    $(this).removeAttr('required').removeClass('is-invalid');
+                }
+            });
+        });
+
+        if (!isValid) {
+            e.preventDefault();
+            Swal.fire('Validation Error', 'Please fill in all required fields.', 'error');
+            return;
+        }
+
+        let isValid1 = true;
+        if (actionType === "Complete") {
+            $('#warpMachineGrid tbody tr').each(function () {
+                let selectField = $(this).find('select.OPR');
+                if (selectField.val() === '' || selectField.val() === null) {
+                    isValid1 = false;
+                    selectField.addClass('is-invalid');
+                    selectField.next('.invalid-feedback').remove();
+                    selectField.after('<div class="invalid-feedback d-block">Please select a warping machine.</div>');
+                } else {
+                    selectField.removeClass('is-invalid');
+                    selectField.next('.invalid-feedback').remove();
+                }
+            });
+        } else if (actionType === "Close") {
+            $('#warpMachineGrid tbody tr').each(function () {
+                $(this).find('input,.remark').each(function () {
+                    if ($(this).closest('td').is(':visible')) {
+                        $(this).attr('required', 'required');
+                        if ($(this).val() === '') {
+                            isValid1 = false;
+                            $(this).addClass('is-invalid');
+                        } else {
+                            $(this).removeClass('is-invalid');
+                        }
+                    } else {
+                        $(this).removeAttr('required').removeClass('is-invalid');
+                    }
+                });
+            });
+        }
+
+        if (!isValid1) {
+            e.preventDefault();
+            Swal.fire('Validation Error', 'Please fill in all required fields.', 'error');
+            return;
+        }
+
+        // Show confirmation pop-up only for "Close" or "Complete"
+        if (actionType === "Complete" || actionType === "Close") {
+            e.preventDefault(); // Prevent immediate submission
+            let actionText = actionType === "Complete" ? "complete" : "close";
+
+            Swal.fire({
+                title: `Are you sure you want to ${actionText} this plan?`,
+                icon: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#3085d6",
+                cancelButtonColor: "#d33",
+                confirmButtonText: `Yes, ${actionText} it!`
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    $('<input>').attr({
+                        type: 'hidden',
+                        name: 'actionType',
+                        value: actionType
+                    }).appendTo('#formdis');
+
+                    $('#formdis').off('submit').submit(); // Now submit the form
+                }
+            });
+        }
+    });
+
+    // Track which button was clicked
+    $('button[type="submit"]').click(function () {
+        $('button[type="submit"]').removeAttr("clicked");
+        $(this).attr("clicked", "true");
+    });
+
+
+    function PreviousItem(e,index){
+        debugger;
+        const machineNo = e.value;
+        if (!machineNo) {
+            return;
+        }
+        $.ajax({
+            url: '/WarpingPlan/GetPreviousProducts',
+            type: 'GET',
+            data: { machineNo: machineNo },
+            success: function (response) {
+                const dropdown = $(`select[name="WarpingPlanDetails[${index}].PreviousProductId"]`);
+                dropdown.empty();
+                if (response && response.length > 0) {
+    @* dropdown.append('<option value="" selected disabled>- Previous Item code -</option>'); *@
+                    response.forEach(item => {
+                            dropdown.append(`<option value="${item.value}" selected>${item.text}</option>`);
+                    });
+                } else {
+                    dropdown.append('<option value="0" selected>NA</option>');
+                }
+            },
+            error: function () {
+                alert('Failed to load products. Please try again.');
+            }
+        });
+    }
+</script>
+
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
+

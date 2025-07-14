@@ -1,0 +1,89 @@
+﻿@model IEnumerable<CRUDWithRepository.Core.LoomMachine>
+@{
+    ViewData["Title"] = "Machine List";
+}
+
+
+<div class="container-fluid">
+
+    <!-- start page title -->
+    <div class="row">
+        <div class="col-md-10 col-sm-12">
+            <div class="page-title-box">
+                <h4>Loom Machine Master</h4>
+                <ol class="breadcrumb m-0">
+                    <li class="breadcrumb-item"><a href="javascript: void(0);">WMS</a></li>
+                    <li class="breadcrumb-item"><a href="javascript: void(0);">Master</a></li>
+                    <li class="breadcrumb-item active">Loom Machine Master</li>
+                </ol>
+            </div>
+        </div>
+       
+        <div class="col-md-2 col-sm-12" style="margin-bottom:10px;">
+            <a type="button" href="/LoomMachine/CreateOrEdit" class="btn btn-info waves-effect waves-light"><i class="ion ion-ios-add"></i> Add New</a>
+        </div>
+
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+
+                    <h4 class="card-title">Loom Machine Master</h4>
+                    <p class="card-title-desc">
+                        &nbsp;&nbsp;&nbsp;
+                    </p>
+                    <div class="table-responsive">
+                        <table id="datatable" class="table table-stripedp" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th>@Html.DisplayNameFor(Model => Model.ID)</th>
+                                    <th>@Html.DisplayNameFor(Model => Model.After)</th>
+                                    <th>@Html.DisplayNameFor(Model => Model.Before)</th>
+                                    <th>@Html.DisplayNameFor(Model => Model.Status)</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                @if (Model != null && Model.Any())
+                                {
+                                    @foreach (var product in Model)
+                                    {
+                                        <tr>
+                                            <td>@product.ID</td>
+                                            <td>@product.After</td>
+                                            <td>@product.Before</td>
+                                            @if (@product.Status == 1)
+                                            {
+                                                <td> <span class="badge bg-success">Active</span> </td>
+                                            }
+                                            else
+                                            {
+                                                <td> <span class="badge bg-danger">InActive</span> </td>
+                                            }
+                                            <td class="textcenter">
+                                                <a class="btn btn-outline-success btn-sm edit" title="Edit" href="@Url.Action("CreateOrEdit", "LoomMachine", new { ID = @product.ID })">
+                                                    <i class="fas fa-pencil-alt"></i>
+                                                </a>
+
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="5"><div>No details available</div></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- end col -->
+    </div>
+</div>

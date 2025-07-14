@@ -1,0 +1,101 @@
+﻿@model CRUDWithRepository.Core.LoomMachine
+
+@{
+    ViewData["Title"] = Model != null && Model.ID == 0 ? "Create Loom Machine" : "Edit Loom Machine";
+}
+
+<div class="container-fluid">
+
+    <!-- start page title -->
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="page-title-box">
+                <h4>Loom Machine Master</h4>
+                <ol class="breadcrumb m-0">
+                    <li class="breadcrumb-item"><a href="javascript: void(0);">Warping Management System</a></li>
+                    <li class="breadcrumb-item"><a href="javascript: void(0);">Master</a></li>
+                    <li class="breadcrumb-item active">Loom Machine Master</li>
+                </ol>
+            </div>
+        </div>
+
+    </div>
+    <!-- end page title -->
+    @using (Html.BeginForm("CreateOrEdit", "LoomMachine", FormMethod.Post, new { enctype = "multipart/form-data", @class = "needs-validation", @novalidate = "" }))
+{
+    <div class="row">
+        <div class="col-xl-12">
+            <div class="card">
+                <div class="card-body">
+                        <h4 class="card-title">Loom Machine Master</h4>
+                    <p class="card-title-desc">&nbsp;&nbsp;&nbsp;</p>
+                    <form class="needs-validation" novalidate>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                 
+                                    @Html.HiddenFor(m => m.ID)
+                                    @Html.LabelFor(m => m.After, new { @class = "control-label" })
+                                        <span class="text-danger">*</span>
+                                        @Html.TextBoxFor(m => m.After, new { @class = "form-control", @maxlength = "200", @required = "required" })
+                                        @Html.ValidationMessageFor(m => m.After, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+
+                            <!-- end col -->
+                            <div class="col-md-4">
+                                <div class="mb-3"> 
+                                    @Html.LabelFor(m => m.Before, new { @class = "control-label" })
+                                        <span class="text-danger">*</span>
+                                        @Html.TextBoxFor(m => m.Before, new { @class = "form-control", @maxlength = "200" })
+                                        @Html.ValidationMessageFor(m => m.Before, "", new { @class = "text-danger" })
+                                </div>
+                            </div>
+                             <div class="col-md-4">
+                                <div class="mb-3"> 
+                                        @Html.LabelFor(m => m.Status, new { @class = "control-label" })
+                                        <span class="text-danger">*</span>
+                                        @Html.DropDownListFor(m => m.Status,
+                                                 new SelectList(new[] {
+                                    new { Value = "1", Text = "Active" },
+                                    new { Value = "0", Text = "Inactive" }}, "Value", "Text"), "Select Status", new { @class = "form-control", @required = "required" })
+                                   @Html.ValidationMessageFor(m => m.Status, "", new { @class = "text-danger" })
+
+                                </div>
+                            </div>
+                            
+                            <!-- end col -->
+                        </div>
+                        @if (Model != null && Model.ID == 0)
+                        {
+                            <button type="submit" class="btn btn-success float-right">
+                                Create
+                            </button>
+                        }
+                        else
+                        {
+                            <button type="submit" class="btn btn-success float-right">
+                                Update
+                            </button>
+                        }
+                            <a class="btn btn-dark" type="button" href="/LoomMachine/Index">Cancel</a>
+                    </form>
+                    <!-- end form -->
+                </div>
+            </div>
+            <!-- end card -->
+        </div> <!-- end col -->
+
+
+    </div>
+    }
+</div>
+
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
+
+

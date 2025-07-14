@@ -1,0 +1,103 @@
+﻿@model IEnumerable<CRUDWithRepository.Core.User>
+@{
+    ViewData["Title"] = "User List";
+}
+
+
+<div class="container-fluid">
+
+    <!-- start page title -->
+    <div class="row">
+        <div class="col-md-10 col-sm-12">
+            <div class="page-title-box">
+                <h4>User Master</h4>
+                <ol class="breadcrumb m-0">
+                    <li class="breadcrumb-item"><a href="javascript: void(0);">WMS</a></li>
+                    <li class="breadcrumb-item"><a href="javascript: void(0);">Master</a></li>
+                    <li class="breadcrumb-item active">User Master</li>
+                </ol>
+            </div>
+        </div>
+       
+        <div class="col-md-2 col-sm-12" style="margin-bottom:10px;">
+            <a type="button" href="/User/CreateOrEdit" class="btn btn-info waves-effect waves-light"><i class="ion ion-ios-add"></i> Add New</a>
+        </div>
+
+    </div>
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+
+                    <h4 class="card-title">User Master</h4>
+                    <p class="card-title-desc">
+                        &nbsp;&nbsp;&nbsp;
+                    </p>
+                    <div class="table-responsive">
+                        <table id="datatable" class="table table-stripedp" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                            <thead>
+                                <tr>
+                                    <th>@Html.DisplayNameFor(Model => Model.ID)</th>
+                                    <th>@Html.DisplayNameFor(Model => Model.UserName)</th>
+                                    <th>@Html.DisplayNameFor(Model => Model.Password)</th>
+                                    <th>@Html.DisplayNameFor(Model => Model.EmployeeCode)</th>
+                                    <th>@Html.DisplayNameFor(Model => Model.UserRole)</th>
+                                    <th>@Html.DisplayNameFor(Model => Model.Email)</th>
+                                    <th>@Html.DisplayNameFor(Model => Model.Mobile)</th>
+                                    <th>@Html.DisplayNameFor(Model => Model.IsActive)</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                @if (Model != null && Model.Any())
+                                {
+                                    @foreach (var User in Model)
+                                    {
+                                        <tr>
+                                            <td>@User.ID</td>
+                                            <td>@User.UserName</td>
+                                            <td>@User.Password</td>
+                                            <td>@User.EmployeeCode</td>
+                                            <td>
+                                                @(User.UserRole == 1 ? "Floor Manager" :
+                                                    User.UserRole == 2 ? "Supervisor" :
+                                                    User.UserRole == 3 ? "Operator" :
+                                                    "")
+                                            </td>
+
+                                            <td>@User.Email</td>
+                                            <td>@User.Mobile</td>
+                                            @if (@User.IsActive == 1)
+                                            {
+                                                <td> <span class="badge bg-success">Active</span> </td>
+                                            }
+                                            else
+                                            {
+                                                <td> <span class="badge bg-danger">InActive</span> </td>
+                                            }
+                                            <td class="textcenter">
+                                                <a class="btn btn-outline-success btn-sm edit" title="Edit" href="@Url.Action("CreateOrEdit", "User", new { ID = @User.ID })">
+                                                    <i class="fas fa-pencil-alt"></i>
+                                                </a>
+
+                                            </td>
+                                        </tr>
+                                    }
+                                }
+                                else
+                                {
+                                    <tr>
+                                        <td colspan="5"><div>No Users available</div></td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- end col -->
+    </div>
+</div>

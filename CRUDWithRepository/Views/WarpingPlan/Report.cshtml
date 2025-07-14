@@ -1,0 +1,201 @@
+﻿@model IEnumerable<CRUDWithRepository.Core.WarpingPlanReport>
+@{
+    ViewData["Title"] = "Plan Report";
+}
+
+
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-md-10 col-sm-12">
+            <div class="page-title-box">
+                <h4>Warping Plan Report</h4>
+                <ol class="breadcrumb m-0">
+                    <li class="breadcrumb-item"><a href="javascript: void(0);">WMS</a></li>
+                    <li class="breadcrumb-item"><a href="javascript: void(0);">Report</a></li>
+                    <li class="breadcrumb-item active">Warping Plan Report</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+
+    <!-- Filters Form -->
+    <div class="row mb-3">
+        <div class="col-12">
+            <form method="get" action="/WarpingPlan/Report" class="row g-3">
+                <div class="col-md-3">
+                    <label for="WarpingId" class="form-label">Warping ID</label>
+                    <input type="text" name="WarpingId" id="WarpingId" class="form-control" value="@ViewBag.WarpingId" placeholder="Enter Warping ID">
+                </div>
+                <div class="col-md-3">
+                    <label for="WarpingMachine" class="form-label">Warping Machine</label>
+                    <select name="Machine" class="form-control">
+                        <option value=""> All Machine No </option>
+                        @if (ViewBag.LoomMachineList != null)
+                        {
+                            foreach (var loommachine in ViewBag.LoomMachineList)
+                            {
+                                if (@loommachine.Value == ViewBag.WarpingMachine)
+                                {
+                                    <option value="@loommachine.Value" selected>@loommachine.Text</option>
+                                }
+                                else
+                                {
+                                    <option value="@loommachine.Value">@loommachine.Text</option>
+                                }
+                            }
+                        }
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label for="FromDate" class="form-label">From Date</label>
+                    <input type="date" name="FromDate" id="FromDate" class="form-control" value="@ViewBag.FromDate">
+                </div>
+                <div class="col-md-3">
+                    <label for="ToDate" class="form-label">To Date</label>
+                    <input type="date" name="ToDate" id="ToDate" class="form-control" value="@ViewBag.ToDate">
+                </div>
+                <div class="col-md-3">
+                    <label for="filterStatus" class="form-label">Status</label>
+                    <select name="filterStatus" id="filterStatus" class="form-control">
+                        <option value="">All Status</option>
+                        <option value="1">Level 1 (Floor Manager)</option>
+                        <option value="2">Level 2 (Supervisor)</option>
+                        <option value="3">Level 3 (Operator)</option>
+                        <option value="4">Completed</option>
+                        <option value="5">Closed</option>
+                        <option value="0">Inactive</option>
+                    </select>
+                </div>
+
+                <div class="col-md-6 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary me-2">Filter</button>
+                    <a href="/WarpingPlan/Report" class="btn btn-secondary">Reset</a>
+                    <button type="button" id="exportBtn" onclick="exportTableToExcel()" class="btn btn-success" style="margin-left:10px">Export to Excel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Data Table -->
+    <div class="row">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title">Warping Plan Report</h4>
+
+                    @if (Model != null && Model.Any()) // Only show when data is available
+                    {
+                        <div id="particalDivAll">
+                            @foreach (var dt in Model)
+                            {
+                                <div class="table-responsive" id="datatable11">
+                                    <table id="datatable1" class="table table-striped" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                                        <thead>
+                                            <tr style="background:#7a6fbe;color:white">
+                                                <th style="text-align:left"> ID : @($"WP00{dt.ID}")</th>
+                                                <th colspan="8" style="text-align:center">Date : @dt.Date.Value.ToString("dd-MM-yyyy")</th>
+                                                <th></th>
+                                            </tr>
+                                            <tr style="background:#7c7c7c">
+                                                <th>Machine No.</th>
+                                                <th>Previous Item Code</th>
+                                                <th>Planned Item Code</th>
+                                                <th>Item Description</th>
+                                                <th>Planned Qty (In-kgs)</th>
+                                                <th>Planned Qty (In Mtr.)</th>
+                                                <th>Remark</th>
+                                                <th>Warping Machine</th>
+                                                <th>AchievedQty</th>
+                                                <th>AchievedRemark</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            @foreach (var itm in dt.Detail)
+                                            {
+                                                <tr>
+                                                    <td>@itm.MachineNo</td>
+                                                    <td>@itm.PreviousProduct</td>
+                                                    <td>@itm.PlannedProduct</td>
+                                                    <td>@itm.Description</td>
+                                                    <td>@itm.PlannedQty</td>
+                                                    <td>@itm.PlannedQty_InMtr</td>
+                                                    <td>@itm.Remark</td>
+                                                    <td>@itm.WarpingMachine</td>
+                                                    <td>@itm.AchievedQty</td>
+                                                    <td>@itm.AchievedRemark</td>
+                                                </tr>
+                                            }
+                                        </tbody>
+                                    </table>
+                                </div>
+                            }
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    document.addEventListener('DOMContentLoaded', function () {
+         $('select').select2();
+        var selectedStatus = "@ViewBag.FilterStatus";
+        if (selectedStatus) {
+            var selectElement = document.getElementById('filterStatus');
+            selectElement.value = selectedStatus;
+        }
+        // let today = new Date();
+
+        //  let firstDay = new Date(today.getFullYear(), today.getMonth(), 1);
+
+        //  let lastDay = new Date(today.getFullYear(), today.getMonth() + 1, 0);
+
+        //  let firstDayFormatted = firstDay.getFullYear() + '-' + String(firstDay.getMonth() + 1).padStart(2, '0') + '-' + String(firstDay.getDate()).padStart(2, '0');
+        //  let lastDayFormatted = lastDay.getFullYear() + '-' + String(lastDay.getMonth() + 1).padStart(2, '0') + '-' + String(lastDay.getDate()).padStart(2, '0');
+
+        //  document.getElementById("FromDate").value = firstDayFormatted;
+        //  document.getElementById("ToDate").value = lastDayFormatted;
+    });
+
+</script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script>
+
+
+
+    function exportTableToExcel() {
+
+        $('#datatable1').css({
+            'border': '1px solid black',
+            'border-collapse': 'collapse'
+        });
+
+        $('#datatable1 th, #datatable1 td').css({
+            'border': '1px solid black',
+            'padding': '5px',
+            'text-align': 'center'
+        });
+        $('#datatable1 th .bgclr').css({
+            'border': 'none !important'
+        });
+
+       
+        var contents = $("#particalDivAll").html();
+ 
+        var result = 'data:application/vnd.ms-excel,' + encodeURIComponent(contents);
+         
+        var link = document.createElement("a");
+        document.body.appendChild(link);
+        link.download = "Warping Plan Report.xls";
+        link.href = result;
+        link.click();
+         
+        $('#datatable1').css('border', '');
+        $('#datatable1 th, #datatable1 td').css('border', '');
+    }
+
+</script>
+

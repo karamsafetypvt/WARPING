@@ -1,0 +1,125 @@
+﻿@model CRUDWithRepository.Core.DashboardModel
+@{
+    ViewBag.Title = "Home Page";
+}
+
+<div class="container-fluid">
+
+    <!-- start page title -->
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="page-title-box">
+                <h4>Dashboard</h4>
+                <ol class="breadcrumb m-0">
+                    <li class="breadcrumb-item"><a href="javascript: void(0);">WMS</a></li>
+                    <li class="breadcrumb-item"><a href="javascript: void(0);">Dashboard</a></li>
+                </ol>
+            </div>
+        </div>
+
+    </div>
+    <!-- end page title -->
+    <div class="row">
+        @if (Context.Session.GetString("Role") == "Admin" || Context.Session.GetString("Role") == "Floor Manager")
+        {
+            <div class="col-xl-3 col-sm-6">
+                <div class="card mini-stat bg-info">
+                    <div class="card-body mini-stat-img">
+                        <a href="/WarpingPlan/Index?filterStatus=1">
+                            <div class="mini-stat-icon">
+                                <i class="mdi mdi-folder-open float-end"></i>
+                            </div>
+                            <div class="text-white">
+                                <h6 class="text-uppercase mb-3 font-size-16 text-white">Level 1 (Floor Manager)</h6>
+                                <h2 class="mb-4 text-white">@Model.Level1</h2>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        }
+        @if (Context.Session.GetString("Role") == "Admin" || Context.Session.GetString("Role") == "Supervisor")
+        {
+            <div class="col-xl-3 col-sm-6">
+                <div class="card mini-stat bg-info">
+                    <div class="card-body mini-stat-img">
+                        <a href="/WarpingPlan/Index?filterStatus=1">
+                            <div class="mini-stat-icon">
+                                <i class="mdi mdi-chart-donut float-end"></i>
+                            </div>
+                            <div class="text-white">
+                                <h6 class="text-uppercase mb-3 font-size-16 text-white">Level 2 (Supervisor)</h6>
+                                <h2 class="mb-4 text-white">@Model.Level1</h2>
+                            </div>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        }
+        @if (Context.Session.GetString("Role") == "Admin" || Context.Session.GetString("Role") == "Operator")
+        {
+            <div class="col-xl-3 col-sm-6">
+                <div class="card mini-stat bg-info">
+                <div class="card-body mini-stat-img">
+                    <a href="/WarpingPlan/Index?filterStatus=2">
+                        <div class="mini-stat-icon">
+                            <i class="mdi mdi-check-bold float-end"></i>
+                        </div>
+                        <div class="text-white">
+                            <h6 class="text-uppercase mb-3 font-size-16 text-white">Level 3 (Operator)</h6>
+                            <h2 class="mb-4 text-white">@Model.Level2</h2>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+        }
+        <div class="col-xl-3 col-sm-6">
+            <div class="card mini-stat bg-success">
+                <div class="card-body mini-stat-img">
+                    <a href="/WarpingPlan/Index?filterStatus=4">
+                        <div class="mini-stat-icon">
+                            <i class="mdi mdi-folder-open float-end"></i>
+                        </div>
+                        <div class="text-white">
+                            <h6 class="text-uppercase mb-3 font-size-16 text-white">Completed</h6>
+                            <h2 class="mb-4 text-white">@Model.Completed</h2>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-sm-6">
+            <div class="card mini-stat bg-info">
+                <div class="card-body mini-stat-img">
+                    <a href="/WarpingPlan/Index?filterStatus=5">
+                        <div class="mini-stat-icon">
+                            <i class="mdi mdi-folder-open float-end"></i>
+                        </div>
+                        <div class="text-white">
+                            <h6 class="text-uppercase mb-3 font-size-16 text-white">Closed</h6>
+                            <h2 class="mb-4 text-white">@Model.Closed</h2>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="col-xl-3 col-sm-6">
+            <div class="card mini-stat bg-success">
+                <div class="card-body mini-stat-img">
+                    <a href="/WarpingPlan/Index">
+                        <div class="mini-stat-icon">
+                            <i class="mdi mdi-folder-open float-end"></i>
+                        </div>
+                        <div class="text-white">
+                            <h6 class="text-uppercase mb-3 font-size-16 text-white">Warping Plan List</h6>
+                            <h2 class="mb-4 text-white">&nbsp;</h2>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+

@@ -1,0 +1,448 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Warping Management System</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta content="Premium Multipurpose Admin & Dashboard Template" name="description" />
+    <meta content="Themesbrand" name="author" />
+    <!-- App favicon -->
+    <link rel="shortcut icon" href="~/assets/images/karam.png">
+
+    <link href="~/assets/libs/sweetalert2/sweetalert2.min.css" rel="stylesheet" />
+    <link href="~/assets/libs/datatables.net-bs4/css/dataTables.bootstrap4.min.css" rel="stylesheet" />
+    <link href="~/assets/libs/datatables.net-buttons-bs4/css/buttons.bootstrap4.min.css" rel="stylesheet" />
+    <link href="~/assets/libs/datatables.net-responsive-bs4/css/responsive.bootstrap4.min.css" rel="stylesheet" />
+    <link href="~/assets/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/assets/css/icons.min.css" rel="stylesheet" />
+    <link href="~/assets/css/app.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="~/assets/vendors/select2/select2.min.css" />
+    <link rel="stylesheet" href="~/assets/vendors/select2-bootstrap-theme/select2-bootstrap.min.css" />
+    <link href="~/Content/css/Custom.css" rel="stylesheet" />
+    <style>
+        .table > thead {
+            color: white;
+            background: #7a6fbe;
+        }
+
+        .navbar-header {
+            background: #181a20;
+            color: white;
+        }
+        /* .noti-icon i{
+                            color:white !important;
+                        }*/
+
+    </style>
+</head>
+<body data-sidebar="dark">
+    <div id="preloader">
+        <div id="status">
+            <div class="spinner-chase">
+                <div class="chase-dot"></div>
+                <div class="chase-dot"></div>
+                <div class="chase-dot"></div>
+                <div class="chase-dot"></div>
+                <div class="chase-dot"></div>
+                <div class="chase-dot"></div>
+            </div>
+        </div>
+    </div>
+    <div id="layout-wrapper">
+        <header id="page-topbar">
+            <div class="navbar-header">
+                <div class="d-flex">
+                    <!-- LOGO -->
+                    <div class="navbar-brand-box">
+                        <a href="index.html" class="logo logo-dark">
+                            <span class="logo-sm">
+                                <img src="~/assets/images/karam.png" alt="" height="22">
+                            </span>
+                            <span class="logo-lg">
+                                <img src="~/assets/images/karam.png" alt="" height="17">
+                            </span>
+                        </a>
+
+                        <a href="index.html" class="logo logo-light">
+                            <span class="logo-sm">
+                                <img src="~/assets/images/karam.png" alt="" height="22">
+                            </span>
+                            <span class="logo-lg">
+                                <img src="~/assets/images/karam.png" alt="" height="35">
+                            </span>
+                        </a>
+                    </div>
+
+                    <button type="button" class="btn btn-sm px-3 font-size-24 header-item waves-effect vertical-menu-btn" @*style="color:white !important"*@>
+                        <i class="mdi mdi-menu"></i>
+                    </button>
+                     
+                </div>
+               @*  <div class="d-flex">
+                    <h2 style="margin-top: 10px;">PN INTERNATIONAL - Warping Management System</h2>
+                </div> *@
+                <!-- For large screens -->
+                <h2 class="d-none d-md-block" style="margin-top: 10px;">PN INTERNATIONAL - Warping Management System</h2>
+
+                <!-- For small screens -->
+                <h5 class="d-block d-md-none text-center" style="margin-top: 5px;">Warping Management System</h5>
+
+                <div class="d-flex">
+
+
+                    <div class="dropdown d-inline-block d-lg-none ms-2">
+                        <button type="button" class="btn header-item noti-icon waves-effect" id="page-header-search-dropdown"
+                                data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                           @*  <i class="mdi mdi-magnify"></i> *@
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-lg dropdown-menu-right p-0"
+                             aria-labelledby="page-header-search-dropdown">
+
+                            <form class="p-3">
+                                <div class="form-group m-0">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" placeholder="Search ..." aria-label="Recipient's username">
+                                        <div class="input-group-append">
+                                            <button class="btn btn-primary" type="submit"><i class="mdi mdi-magnify"></i></button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+
+
+
+
+                    <div class="dropdown d-none d-lg-inline-block">
+                        <button type="button" class="btn header-item noti-icon waves-effect" data-toggle="fullscreen">
+                            <i class="mdi mdi-fullscreen font-size-24"></i>
+                        </button>
+                    </div>
+
+                    <div class="dropdown d-inline-block">
+                        <button type="button" class="btn header-item waves-effect" id="page-header-user-dropdown"
+                                data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <img class="rounded-circle header-profile-user" src="~/assets/images/Icons/profile.png"
+                                 alt="Header Avatar">
+                        </button>
+                        <div class="dropdown-menu dropdown-menu-end">
+                            <!-- item-->
+                          @*   <a class="dropdown-item" href="/Account/ChangePassword"><i class="mdi mdi-account-circle font-size-17 text-muted align-middle me-1"></i>Change Password</a> *@
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" href="#">
+                                <i class="mdi mdi-account-circle font-size-17 text-muted align-middle me-1"></i>
+                                @* @Session["UserName"].ToString() <br />(@Session["UserRole"].ToString()) *@
+                                 @($"{Context.Session.GetString("UserName")} - {Context.Session.GetString("EmployeeCode")}")
+                                  <br /> @($"({Context.Session.GetString("Role")})")
+                                   
+                            </a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item text-danger" href="~/Account/LogOut"><i class="mdi mdi-power font-size-17 text-muted align-middle me-1 text-danger"></i> Logout</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        <!-- ========== Left Sidebar Start ========== -->
+        <div class="vertical-menu">
+
+            <div data-simplebar class="h-100">
+
+                <!--- Sidemenu -->
+                <div id="sidebar-menu">
+                    <!-- Left Menu Start -->
+                    <ul class="metismenu list-unstyled" id="side-menu">
+                        <li class="menu-title" style="color:white;font-weight:bold;text-align:center">
+                            Welcome
+                            <p>  @($"{Context.Session.GetString("UserName")} - {Context.Session.GetString("EmployeeCode")}")<br /></p>
+                        </li>
+
+                        <li>
+                            <a href="/Home" class="waves-effect">
+                                <i class="mdi mdi-view-dashboard"></i>
+                                <span>Dashboard</span>
+                            </a>
+                        </li>
+                        @if(Context.Session.GetString("Role")=="Admin"){
+                        <li>
+                            <a href="javascript: void(0);" class="has-arrow waves-effect">
+                                <i class="mdi mdi-text-box-multiple-outline"></i>
+                                <span>Master</span>
+                            </a>
+                            <ul class="sub-menu" aria-expanded="false">
+                                <li><a href="/Product/Index">Product Master</a></li>
+                                <li>
+                                    <a href="/User/Index">
+                                        User Master
+                                    </a>
+                                </li>
+                                <li><a href="/LoomMachine/Index">Loom Machine Master</a></li>
+                                <li><a href="/WarpingMachine/Index">Warping Machine Master</a></li>
+                                
+                            </ul>
+                        </li>
+                        }
+                        <li>
+                            <a href="/WarpingPlan/Index" class=" waves-effect">
+                                <i class="mdi mdi-clipboard-outline"></i>
+                                <span>Warping Plan Request</span>
+                            </a>
+                        </li>
+                        @if (Context.Session.GetString("Role") == "Admin")
+                        {
+                            <li>
+                                <a href="javascript: void(0);" class="has-arrow waves-effect">
+                                    <i class="mdi mdi-format-list-bulleted-type"></i>
+                                    <span>Report</span>
+                                </a>
+                                <ul class="sub-menu" aria-expanded="false">
+                                    <li><a href="/WarpingPlan/Report">Warping Report</a></li>
+                                </ul>
+                            </li>
+                        }
+                    </ul>
+                </div>
+              
+            </div>
+        </div>
+        <div class="main-content">
+            <div class="page-content">
+                @RenderBody()
+            </div>
+        </div>
+    </div>
+
+    <div class="right-bar">
+        <div data-simplebar class="h-100">
+
+            <div class="rightbar-title d-flex align-items-center px-3 py-4">
+
+                <h5 class="m-0 me-2">Settings</h5>
+
+                <a href="javascript:void(0);" class="right-bar-toggle ms-auto">
+                    <i class="mdi mdi-close noti-icon"></i>
+                </a>
+            </div>
+
+            <!-- Settings -->
+            <hr class="mt-0" />
+
+
+            <div class="px-4 py-2">
+                <h6 class="mb-3">Select Custome Colors</h6>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input theme-color" type="radio" name="theme-mode"
+                           id="theme-default" value="default" onchange="document.documentElement.setAttribute('data-theme-mode', 'default')" checked>
+                    <label class="form-check-label" for="theme-default">Default</label>
+                </div>
+
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input theme-color" type="radio" name="theme-mode"
+                           id="theme-red" value="red" onchange="document.documentElement.setAttribute('data-theme-mode', 'red')">
+                    <label class="form-check-label" for="theme-red">Red</label>
+                </div>
+
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input theme-color" type="radio" name="theme-mode"
+                           id="theme-teal" value="teal" onchange="document.documentElement.setAttribute('data-theme-mode', 'teal')">
+                    <label class="form-check-label" for="theme-teal">Teal</label>
+                </div>
+            </div>
+
+
+            <h6 class="text-center mb-0 mt-3">Choose Layouts</h6>
+
+            <div class="p-4">
+                <div class="mb-2">
+                    <img src="~/assets/images/layouts/layout-1.jpg" class="img-thumbnail" alt="">
+                </div>
+                <div class="form-check form-switch mb-3">
+                    <input type="checkbox" class="form-check-input theme-choice" id="light-mode-switch" checked />
+                    <label class="form-check-label" for="light-mode-switch">Light Mode</label>
+                </div>
+
+                <div class="mb-2">
+                    <img src="~/assets/images/layouts/layout-2.jpg" class="img-thumbnail" alt="">
+                </div>
+                <div class="form-check form-switch mb-3">
+                    <input type="checkbox" class="form-check-input theme-choice" id="dark-mode-switch" data-bsStyle="assets/css/bootstrap-dark.min.css" data-appStyle="assets/css/app-dark.min.css" />
+                    <label class="form-check-label" for="dark-mode-switch">Dark Mode</label>
+                </div>
+
+                <div class="mb-2">
+                    <img src="~/assets/images/layouts/layout-3.jpg" class="img-thumbnail" alt="">
+                </div>
+                <div class="form-check form-switch mb-5">
+                    <input type="checkbox" class="form-check-input theme-choice" id="rtl-mode-switch" data-appStyle="assets/css/app-rtl.min.css" />
+                    <label class="form-check-label" for="rtl-mode-switch">RTL Mode</label>
+                </div>
+
+
+            </div>
+
+        </div> <!-- end slimscroll-menu-->
+    </div>
+    <!-- /Right-bar -->
+    <!-- Right bar overlay-->
+    <div class="rightbar-overlay"></div>
+
+    <script src="~/assets/libs/jquery/jquery.min.js"></script>
+    <script src="~/assets/libs/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="~/assets/libs/metismenu/metisMenu.min.js"></script>
+    <script src="~/assets/libs/simplebar/simplebar.min.js"></script>
+    <script src="~/assets/libs/node-waves/waves.min.js"></script>
+    <script src="~/assets/libs/jquery-sparkline/jquery.sparkline.min.js"></script>
+    <script src="~/assets/libs/morris.js/morris.min.js"></script>
+    <script src="~/assets/libs/raphael/raphael.min.js"></script>
+    <script src="~/assets/js/pages/dashboard.init.js"></script>
+    <script src="~/assets/libs/table-edits/build/table-edits.min.js"></script>
+    <script src="~/assets/js/pages/table-editable.int.js"></script>
+    <script src="~/assets/libs/sweetalert2/sweetalert2.min.js"></script>
+    <script src="~/assets/js/pages/sweet-alerts.init.js"></script>
+
+    <script src="~/assets/libs/datatables.net/js/jquery.dataTables.min.js"></script>
+    <script src="~/assets/libs/datatables.net-bs4/js/dataTables.bootstrap4.min.js"></script>
+    <script src="~/assets/libs/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
+    <script src="~/assets/libs/datatables.net-buttons/js/buttons.html5.min.js"></script>
+    <script src="~/assets/libs/datatables.net-buttons/js/buttons.print.min.js"></script>
+    <script src="~/assets/libs/datatables.net-buttons/js/buttons.colVis.min.js"></script>
+    <script src="~/assets/libs/datatables.net-buttons-bs4/js/buttons.bootstrap4.min.js"></script>
+    <script src="~/assets/libs/datatables.net-responsive/js/dataTables.responsive.min.js"></script>
+    <script src="~/assets/libs/datatables.net-responsive-bs4/js/responsive.bootstrap4.min.js"></script>
+    <script src="~/assets/js/pages/datatables.init.js"></script>
+    <script src="~/assets/js/app.js"></script>
+    <script src="~/assets/libs/parsleyjs/parsley.min.js"></script>
+    <script src="~/assets/js/pages/form-validation.init.js"></script>
+    <script src="~/assets/vendors/select2/select2.min.js"></script>
+    @* <script src="~/Content/js/ResetPassword.js"></script> *@
+    
+   
+    @RenderSection("Scripts", required: false)
+
+    <script>
+        $(document).ready(function () {
+            debugger
+            var returnMessage = '@TempData["successMsg"]';
+            var returnCode = '@TempData["ReturnCode"]';
+            var href = '@TempData["href"]';
+            var MessageType = '@TempData["MessageType"]';
+            if (returnCode.length > 0) {
+                //console.log(returnCode +'::3434')
+                if (href.length > 0) {
+                    if (returnCode == -5 || returnCode == 23)
+                        AlertWithTitleIconNewWindow("", returnMessage, "warning", href);
+                    else if (returnCode < 1)
+                        AlertWithTitleIconNewWindow("", returnMessage, "error", href);
+                    else if (returnCode > 0)
+                        AlertWithTitleIconNewWindow("", returnMessage, "success", href);
+                }
+                else {
+                    if (returnCode == -5 || returnCode == 23) {
+                        AlertWithTitleIcon("", returnMessage, "warning");
+                    }
+                    else if (returnCode < 1) {
+                        AlertWithTitleIcon("", returnMessage, "error");
+                        $('#NewPassword').addClass('valid');
+                    }
+                    else if (returnCode > 0) {
+                        AlertWithTitleIcon("", returnMessage, "success");
+                    }
+                }
+            }
+            function AlertWithTitleIcon(title, text, type) {
+                Swal.fire({
+                    title: title,
+                    text: returnMessage,
+                    icon: type,
+                    confirmButtonColor: "#7a6fbe",
+                    showClass: {
+                        popup: 'animate__animated animate__fadeInDown'
+                    },
+                    hideClass: {
+                        popup: 'animate__animated animate__fadeOutUp'
+                    }
+                })
+            }
+            function AlertWithTitleIconNewWindow(title, text, type, newWindow) {
+
+                Swal.fire({
+                    title: title,
+                    text: "You clicked the button!",
+                    icon: "success",
+                    showCancelButton: !0,
+                    confirmButtonColor: "#7a6fbe",
+                    cancelButtonColor: "#f46a6a",
+                    showClass: {
+                        popup: 'animate__animated animate__fadeInDown'
+                    },
+                    hideClass: {
+                        popup: 'animate__animated animate__fadeOutUp'
+                    }
+                },
+                    function () {
+                        window.location.href = newWindow;
+                    });
+            }
+        });
+        $(window).on('load', function () {
+            //    $("#preloader").fadeOut("slow");
+            $("#preloader").show();
+            $("#status").show();
+        });
+
+        $(window).on('beforeunload', function () {
+            /* $("#preloader").fadeIn(50);*/
+            $("#preloader").show();
+            $("#status").show();
+        });
+
+        $(window).bind("pageshow", function (event) {
+            $("#preloader").hide();
+            $("#status").hide();
+        });
+
+        function isNumberKey(evt, element) {
+            var charCode = (evt.which) ? evt.which : evt.keyCode
+            if (charCode > 31 && (charCode < 48 || charCode > 57) && !(charCode == 46 || charCode == 8))
+                return false;
+            else {
+                var len = $(element).val().length;
+                var index = $(element).val().indexOf('.');
+                if (index > 0 && charCode == 46) {
+                    return false;
+                }
+                if (index > 0) {
+                    var CharAfterdot = (len + 1) - index;
+                    if (CharAfterdot > 3) {
+                        return false;
+                    }
+                }
+
+            }
+            return true;
+        }
+        
+    </script>
+    <script>
+    $(document).ready(function () { 
+        if ($.fn.dataTable.isDataTable('#datatable')) { 
+            $('#datatable').DataTable().destroy();
+        }
+         
+        $('#datatable').DataTable({
+            "order": [[0, 'desc']],  
+            "paging": true,
+            "searching": true,
+            "info": true,
+            "autoWidth": false,
+            "stateSave": true  
+        });
+    });
+</script>
+
+</body>
+</html>
+
+

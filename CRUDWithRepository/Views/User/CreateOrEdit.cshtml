@@ -1,0 +1,142 @@
+﻿@model CRUDWithRepository.Core.User
+
+@{
+    ViewData["Title"] = Model != null && Model.ID == 0 ? "Create User" : "Edit User";
+}
+
+<div class="container-fluid">
+
+    <!-- start page title -->
+    <div class="row">
+        <div class="col-sm-6">
+            <div class="page-title-box">
+                <h4>User Master</h4>
+                <ol class="breadcrumb m-0">
+                    <li class="breadcrumb-item"><a href="javascript: void(0);">Warping Management System</a></li>
+                    <li class="breadcrumb-item"><a href="javascript: void(0);">Master</a></li>
+                    <li class="breadcrumb-item active">User Master</li>
+                </ol>
+            </div>
+        </div>
+
+    </div>
+    <!-- end page title -->
+    @using (Html.BeginForm("CreateOrEdit", "User", FormMethod.Post, new { enctype = "multipart/form-data", @class = "needs-validation", @novalidate = "" }))
+    {
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="card">
+                    <div class="card-body">
+                        <h4 class="card-title">User Master</h4>
+                        <p class="card-title-desc">&nbsp;&nbsp;&nbsp;</p>
+                        <form class="needs-validation" novalidate>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="mb-3"> 
+                                        @Html.HiddenFor(m => m.ID)
+                                        @Html.LabelFor(m => m.UserName, new { @class = "control-label" })
+                                        @Html.TextBoxFor(m => m.UserName, new { @class = "form-control", @maxlength = "50", @required = "required" })
+                                        @Html.ValidationMessageFor(m => m.UserName, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                                <!-- end col -->
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+
+                                        @Html.LabelFor(m => m.Password, new { @class = "control-label" })
+                                        @Html.TextBoxFor(m => m.Password, new { @class = "form-control", @maxlength = "50", @required = "required",@type="Password" })
+                                        @Html.ValidationMessageFor(m => m.Password, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+
+                                        @Html.LabelFor(m => m.EmployeeCode, new { @class = "control-label" })
+                                        @Html.TextBoxFor(m => m.EmployeeCode, new { @class = "form-control", @maxlength = "50", @required = "required" })
+                                        @Html.ValidationMessageFor(m => m.EmployeeCode, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+
+                            </div>
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+
+                                        @Html.LabelFor(m => m.UserRole, new { @class = "control-label" })
+                                        @Html.DropDownListFor(m => m.UserRole,
+                                                 new SelectList(new[] {
+                                    new { Value = "1", Text = "Floor Manager" },
+                                    new { Value = "2", Text = "Supervisor" },
+                                    new { Value = "3", Text = "Operator" }}, "Value", "Text"), "Select User Role", new { @class = "form-control", @required = "required" })
+                                        @Html.ValidationMessageFor(m => m.UserRole, "", new { @class = "text-danger" })
+
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        @Html.LabelFor(m => m.Email, new { @class = "control-label" })
+                                        @Html.TextBoxFor(m => m.Email, new { @class = "form-control", @maxlength = "50", @required = "required" })
+                                        @Html.ValidationMessageFor(m => m.Email, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="mb-3">
+                                        @Html.LabelFor(m => m.Mobile, new { @class = "control-label" })
+                                        @Html.TextBoxFor(m => m.Mobile, new { @class = "form-control", @maxlength = "50", @required = "required" })
+                                        @Html.ValidationMessageFor(m => m.Mobile, "", new { @class = "text-danger" })
+                                    </div>
+                                </div>
+                                
+                            </div>
+                            
+                             <div class="row">
+                                <div class="col-md-4">
+                                    <div class="mb-3"> 
+                                        @Html.LabelFor(m => m.IsActive, new { @class = "control-label" })
+                                        @Html.DropDownListFor(m => m.IsActive,
+                                                 new SelectList(new[] {
+                                    new { Value = "1", Text = "Active" },
+                                    new { Value = "0", Text = "Inactive" }}, "Value", "Text"), "Select Status", new { @class = "form-control", @required = "required" })
+                                        @Html.ValidationMessageFor(m => m.IsActive, "", new { @class = "text-danger" })
+
+                                    </div>
+                                </div>
+                                
+                            </div>
+                            
+                            
+
+
+                            @if (Model != null && Model.ID == 0)
+                            {
+                                <button type="submit" class="btn btn-success float-right">
+                                    Create
+                                </button>
+                            }
+                            else
+                            {
+                                <button type="submit" class="btn btn-success float-right">
+                                    Update
+                                </button>
+                            }
+                            <a class="btn btn-dark" type="button" href="/User/Index">Cancel</a>
+                        </form>
+                        <!-- end form -->
+                    </div>
+                </div>
+                <!-- end card -->
+            </div> <!-- end col -->
+
+
+        </div>
+    }
+</div>
+
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
+
+
